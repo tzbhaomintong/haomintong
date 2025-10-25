@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>花粉过敏防护</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #e8f5e9;
+            color: #333;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .page {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .nav-btn {
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .nav-btn.active {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        h1, h2, h3 {
+            color: #2c5530;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        
+        .options {
+            margin-top: 10px;
+        }
+        
+        .option {
+            margin-bottom: 5px;
+        }
+        
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .reminder-list {
+            list-style-type: none;
+        }
+        
+        .reminder-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f0f7f0;
+            border-radius: 5px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .emergency-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+            color: #fff;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(239,68,68,0.5);
+        }
+        
+        .emergency-mode {
+            background: rgba(239,68,68,0.15);
+            border: 2px solid #ef4444;
+            padding: 15px;
+            border-radius: 10px;
+            color: #333;
+            text-align: center;
+            margin-top: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+        
+        .search-btn {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .current {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .forecast {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .day {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .level {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .low { color: green; }
+        .medium { color: orange; }
+        .high { color: red; }
+        
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        /* 历史记录页面样式 */
+.history-list {
+    margin-top: 20px;
+}
+
+.history-item {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.date {
+    font-weight: bold;
+    color: #2c5530;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.details > div {
+    margin-bottom: 8px;
+}
+
+.label {
+    font-weight: bold;
+    color: #555;
+}
+
+.value {
+    color: #333;
+}
+
+/* 花粉浓度等级颜色 */
+.high {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.medium {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+.low {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* 过敏程度 */
+.improved {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.worsened {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.stats {
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航 -->
+        <div class="nav" id="main-nav" style="display: none;">
+            <button class="nav-btn" onclick="showPage('form-page')">风险量表</button>
+            <button class="nav-btn" onclick="showPage('concentration-page')">查询浓度</button>
+            <button class="nav-btn" onclick="showPage('reminder-page')">防护提醒</button>
+            
+            <button class="nav-btn" onclick="showPage('emergency-page')">紧急呼叫</button>
+            <button class="nav-btn" onclick="showPage('emergency-page')">AI助手</button>            <button class="nav-btn" onclick="showPage('history-page')">历史记录</button>
+        </div>
+        <div id="ai" class="page">
+            <h1>AI</h1>
+            <div id></div>
+        </div>
+        <!-- 历史记录页面 -->
+<div id="history-page" class="page">
+    <h1>历史记录</h1>
+ <!-- 历史记录列表 -->
+    <div class="history-list">
+        <!-- 昨天的记录 -->
+        <div class="history-item">
+            <div class="date">昨天</div>
+            <div class="details">
+                <div class="concentration">
+                    <span class="label">花粉浓度：</span>
+                    <span class="value high">较高</span>
+                </div>
+                <div class="measures">
+                    <span class="label">采取的措施：</span>
+                    <span class="value">尽量减少外出，按时吃药</span>
+                </div>
+                <div class="status">
+                    <span class="label">过敏程度：</span>
+                    <span class="value improved">得到缓解</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 前天的记录 -->
+        <div class="history-item">
+            <div class="date">前天</div>
+            <div class="details">
+                <div class="concentration">
+                    <span class="label">花粉浓度：</span>
+                    <span class="value high">较高</span>
+                </div>
+                <div class="measures">
+                    <span class="label">采取的措施：</span>
+                    <span class="value">尽量减少外出，保持室内空气清洁，按时吃药</span>
+                </div>
+                <div class="status">
+                    <span class="label">过敏程度：</span>
+                    <span class="value improved">得到缓解</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 大前天的记录 -->
+        <div class="history-item">
+            <div class="date">大前天</div>
+            <div class="details">
+                <div class="concentration">
+                    <span class="label">花粉浓度：</span>
+                    <span class="value low">较低</span>
+                </div>
+                <div class="measures">
+                    <span class="label">采取的措施：</span>
+                    <span class="value">出门时戴口罩，按时吃药</span>
+                </div>
+                <div class="status">
+                    <span class="label">过敏程度：</span>
+                    <span class="value improved">得到缓解</span>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- 统计信息 -->
+    <div class="stats">
+        <p>最近3天记录，共119字</p>
+    </div>
+</div>
+
+
+        <!-- 表单页面 -->
+        <div id="form-page" class="page active">
+            <h1>蒿草风险感知量表</h1>
+            <form id="risk-perception-form">
+                <!-- 情绪感受侧面 -->
+                <div class="question">
+                    <div class="question-text">1. 我觉得自己有多大可能性对蒿草花粉过敏?</div>
+                    <div class="options">
+                        <div class="option"><input type="radio" name="q1" value="1" required> 极不可能</div>
+                        <div class="option"><input type="radio" name="q1" value="2"> 不太可能</div>
+                        <div class="option"><input type="radio" name="q1" value="3"> 有点可能</div>
+                        <div class="option"><input type="radio" name="q1" value="4"> 很有可能</div>
+                        <div class="option"><input type="radio" name="q1" value="5"> 极有可能</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">2. 我担心对蒿草花粉过敏</div>
+                    <div class="options">
+                        <div class="option"><input type="radio" name="q2" value="1" required> 从来没有</div>
+                        <div class="option"><input type="radio" name="q2" value="2"> 很少</div>
+                        <div class="option"><input type="radio" name="q2" value="3"> 有时</div>
+                        <div class="option"><input type="radio" name="q2" value="4"> 较多时候</div>
+                        <div class="option"><input type="radio" name="q2" value="5"> 很多时候</div>
+                        <div class="option"><input type="radio" name="q2" value="6"> 一直</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">3. 我觉得自己容易对蒿草花粉过敏</div>
+                    <div class="options">
+                        <div class="option"><input type="radio" name="q3" value="1" required> 强烈不同意</div>
+                        <div class="option"><input type="radio" name="q3" value="2"> 不同意</div>
+                        <div class="option"><input type="radio" name="q3" value="3"> 不太同意</div>
+                        <div class="option"><input type="radio" name="q3" value="4"> 基本同意</div>
+                        <div class="option"><input type="radio" name="q3" value="5"> 同意</div>
+                        <div class="option"><input type="radio" name="q3" value="6"> 强烈同意</div>
+                    </div>
+                </div>
+                
+                <!-- 认知判断侧面 -->
+                <div class="question">
+                    <div class="question-text">4. 我确信我不会对蒿草花粉过敏</div>
+                    <div class="options">
+                        <div class="option"><input type="radio" name="q4" value="1" required> 强烈不同意</div>
+                        <div class="option"><input type="radio" name="q4" value="2"> 不同意</div>
+                        <div class="option"><input type="radio" name="q4" value="3"> 不太同意</div>
+                        <div class="option"><input type="radio" name="q4" value="4"> 基本同意</div>
+                        <div class="option"><input type="radio" name="q4" value="5"> 同意</div>
+                        <div class="option"><input type="radio" name="q4" value="6"> 强烈同意</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">5. 不管几率有多小,我都可能对蒿草花粉过敏</div>
+                    <div class="options">
+                        <div class="option"><input type="radio" name="q5" value="1" required> 强烈不同意</div>
+                        <div class="option"><input type="radio" name="q5" value="2"> 不同意</div>
+                        <div class="option"><input type="radio" name="q5" value="3"> 不太同意</div>
+                        <div class="option"><input type="radio" name="q5" value="4"> 基本同意</div>
+                        <div class="option"><input type="radio" name="q5" value="5"> 同意</div>
+                        <div class="option"><input type="radio" name="q5" value="6"> 强烈同意</div>
+                    </div>
+                </div>
+                
+                <!-- 非同寻常严重性表征侧面 -->
+                <div class="question">
+                    <div 
+class="question-text">6. 对蒿草花粉过敏,是我的事</div>
+                    <div class="options">
+                        <div class="option"><input type="radio" name="q6" value="1" required> 从未想过</div>
+                        <div class="option"><input type="radio" name="q6" value="2"> 很少想过</div>
+                        <div class="option"><input type="radio" name="q6" value="3"> 有时想过</div>
+                        <div class="option"><input type="radio" name="q6" value="4"> 经常想</div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">提交问卷</button>
+            </form>
+            
+            <div id="form-result" class="result">
+                <h3>感谢您完成问卷！</h3>
+                <p>您的回答已提交成功。</p>
+            </div>
+        </div>
+        
+        <!-- 查询浓度页面 -->
+        <div id="concentration-page" class="page">
+            <h1>花粉浓度查询</h1>
+            <div class="search-box">
+                <input type="text" id="cityInput" placeholder="请输入城市名称，例如：太原市">
+                <button class="search-btn" onclick="checkPollen()">查询</button>
+            </div>
+            <div class="error" id="errorMsg">抱歉，目前只支持查询太原市的花粉浓度数据。</div>
+            
+            <div class="result" id="concentration-result">
+                <h2>太原市花粉浓度</h2>
+                <div class="current">
+                    <h3>当前浓度</h3>
+                    <p>浓度值: <span class="level medium">85 颗粒/立方米</span></p>
+                    <p>等级: 中等</p>
+                    <p>更新时间: 2023-09-15 10:30</p>
+                </div>
+                
+                <h3>未来七天预测</h3>
+                <div class="forecast">
+                    <div class="day">
+                        <p>9月16日</p>
+                        <p class="level high">高</p>
+                        <p>120 颗粒/立方米</p>
+                    </div>
+                    <div class="day">
+                        <p>9月17日</p>
+                        <p class="level high">高</p>
+                        <p>135 颗粒/立方米</p>
+                    </div>
+                    <div class="day">
+                        <p>9月18日</p>
+                        <p class="level medium">中</p>
+                        <p>95 颗粒/立方米</p>
+                    </div>
+                    <div class="day">
+                        <p>9月19日</p>
+                        <p class="level medium">中</p>
+                        <p>80 颗粒/立方米</p>
+                    </div>
+                    <div class="day">
+                        <p>9月20日</p>
+                        <p class="level low">低</p>
+                        <p>45 颗粒/立方米</p>
+                    </div>
+                    <div class="day">
+                        <p>9月21日</p>
+                        <p class="level low">低</p>
+                        <p>35 颗粒/立方米</p>
+                    </div>
+                    <div class="day">
+                        <p>9月22日</p>
+                        <p class="level medium">中</p>
+                        <p>75 颗粒/立方米</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!-- 提醒页面 -->
+        <div id="reminder-page" class="page">
+            <h1>花粉过敏防护指南</h1>
+            
+            <ul class="reminder-list">
+                <li class="reminder-item">
+                    <h3>关注花粉浓度预报</h3>
+                    <p>在花粉浓度高的时段（通常是<span class="highlight">上午10点-下午4点、大风天</span>）尽量避免外出。</p>
+                </li>
+                
+                <li class="reminder-item">
+                    <h3>外出时做好防护</h3>
+                    <p>外出时佩戴<span class="highlight">N95口罩和防风镜</span>，回家后立即更换外套、洗头洗脸，减少花粉残留。</p>
+                </li>
+                
+                <li class="reminder-item">
+                    <h3>避免户外晾晒</h3>
+                    <p>避免在户外晾晒衣物、被褥，防止花粉附着。</p>
+                </li>
+                
+                <li class="reminder-item">
+                    <h3>保持室内空气清洁</h3>
+                    <p>关闭门窗，使用<span class="highlight">空气净化器（带HEPA滤网）</span>过滤空气中的花粉。</p>
+                </li>
+                
+                <li class="reminder-item">
+                    <h3>定期清洁家居</h3>
+                    <p>定期用湿抹布擦拭家具、拖地，避免干扫引发花粉扬尘。</p>
+                </li>
+                
+                <li class="reminder-item">
+                    <h3>症状缓解方法</h3>
+                    <p>出现打喷嚏、流鼻涕等症状时，请使用<span class="highlight">生理盐水洗鼻</span>。</p>
+                </li>
+                
+                <li class="reminder-item">
+                    <h3>科学用药指导</h3>
+                    <p>需用药时，在医生指导下选择<span class="highlight">抗组胺药（如氯雷他定）或鼻用糖皮质激素</span>，避免自行滥用药物。</p>
+                </li>
+            </ul>
+            
+            <div class="footer">
+                <p>祝您健康度过花粉季节！</p>
+            </div>
+        </div>
+  <!-- 紧急呼叫页面 -->
+        <div id="emergency-page" class="page">
+            <h1>紧急呼救系统</h1>
+            <p style="margin-bottom: 15px;">在紧急情况下，点击下方按钮触发紧急呼救。系统会自动联系紧急联系人并发送您的位置信息。</p>
+            
+            <button class="emergency-btn" onclick="triggerEmergency()">
+                🆘 紧急呼救
+            </button>
+            
+            <div id="emergencyActive" style="display: none;">
+                <div class="emergency-mode">
+                    <h3>🚨 紧急呼救已激活</h3>
+                    <p>正在联系紧急联系人...</p>
+                    <p>📍 已发送位置信息</p>
+                    <button class="submit-btn" onclick="cancelEmergency()" style="margin-top: 15px;">
+                        取消呼救
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换功能
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示指定页面
+            document.getElementById(pageId).classList.add('active');
+            
+            // 更新导航按钮状态
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 找到对应导航按钮并激活
+            const navBtns = document.querySelectorAll('.nav-btn');
+            for (let i = 0; i < navBtns.length; i++) {
+                if (navBtns[i].getAttribute('onclick').includes(pageId)) {
+                    navBtns[i].classList.add('active');
+                    break;
+                }
+            }
+        }
+          // 表单提交处理
+        document.getElementById('risk-perception-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 验证所有问题都已回答
+            const questions = document.querySelectorAll('input[type="radio"]:checked');
+            if (questions.length < 6) {
+                alert('请回答所有问题后再提交！');
+                return;
+            }
+            
+            // 显示结果
+            document.getElementById('form-result').style.display = 'block';
+            
+            // 显示导航，跳转到提醒页面
+            document.getElementById('main-nav').style.display = 'flex';
+            showPage('reminder-page');
+            
+            // 这里可以添加将数据发送到服务器的代码
+            // 例如: fetch('/submit', { method: 'POST', body: new FormData(this) });
+        });
+        
+        // 花粉浓度查询功能
+        function checkPollen() {
+            const cityInput = document.getElementById('cityInput').value;
+            const result = document.getElementById('concentration-result');
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // 检查输入是否为"太原市"
+            if (cityInput === "太原市") {
+                result.style.display = 'block';
+                errorMsg.style.display = 'none';
+            } else {
+                result.style.display = 'none';
+                errorMsg.style.display = 'block';
+            }
+        }
+        
+        // 紧急呼叫功能
+        let emergencyActivated = false;
+        
+        function triggerEmergency() {
+            if (confirm('确定要触发紧急呼救吗？\n\n系统将：\n- 联系您的紧急联系人\n- 发送您的位置信息')) {
+                activateEmergency();
+            }
+        }
+        
+        function activateEmergency() {
+            if (emergencyActivated) return;
+            
+            emergencyActivated = true;
+            document.getElementById('emergencyActive').style.display = 'block';
+            
+            console.log('🚨 正在联系紧急联系人...');
+            console.log('📍 已发送位置信息');
+            
+            // 模拟发送紧急信息
+            alert('紧急呼救已激活！已通知您的紧急联系人。');
+        }
+        
+        function cancelEmergency() {
+            if (confirm('确定要取消紧急呼救吗？')) {
+                emergencyActivated = false;
+                document.getElementById('emergencyActive').style.display = 'none';
+                console.log('✅ 已取消紧急呼救');
+                alert('紧急呼救已取消。');
+            }
+        }
+        
+        // 初始加载时显示表单页面
+        window.onload = function() {
+            showPage('form-page');
+        }
+    </script>
+</body>
+</html>
